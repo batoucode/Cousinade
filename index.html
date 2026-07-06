@@ -10,6 +10,10 @@
     --ink:#2E2A22;
     --ink-soft:#6B6255;
     --red:#C1443A;
+    --orange:#E3852E;
+    --gold:#E3A72E;
+    --olive:#6E7E32;
+    --purple:#8A5A9E;
     --line:#E2D9C4;
     --head:#F1E8D3;
   }
@@ -18,7 +22,11 @@
 
   body{
     margin:0;
-    background:var(--cream);
+    background:
+      radial-gradient(circle at 12% 0%, rgba(227,167,46,0.16), transparent 45%),
+      radial-gradient(circle at 90% 10%, rgba(138,90,158,0.14), transparent 40%),
+      radial-gradient(circle at 50% 100%, rgba(110,126,50,0.10), transparent 45%),
+      var(--cream);
     color:var(--ink);
     font-family:Arial, Helvetica, sans-serif;
     padding:32px 16px 60px;
@@ -26,9 +34,27 @@
 
   .wrap{max-width:900px;margin:0 auto;}
 
+  .ribbon{
+    height:6px;
+    border-radius:6px;
+    margin-bottom:20px;
+    background:linear-gradient(90deg,
+      var(--gold), var(--red), var(--purple), var(--olive), var(--orange));
+  }
+
   h1{
     font-size:28px;
     margin:0 0 4px;
+    color:var(--red);
+    display:inline-block;
+  }
+  @supports (background-clip:text) or (-webkit-background-clip:text){
+    h1{
+      background:linear-gradient(90deg, var(--red), var(--purple));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
   }
 
   .sub{
@@ -52,7 +78,7 @@
     letter-spacing:.04em;
     color:var(--ink-soft);
     padding:10px 14px;
-    border-bottom:1px solid var(--line);
+    border-bottom:2px solid var(--gold);
   }
 
   tbody td{
@@ -113,7 +139,7 @@
   .add-form input{flex:2;min-width:150px;}
 
   .add-form button{
-    background:var(--ink);
+    background:linear-gradient(90deg, var(--red), var(--purple));
     color:#fff;
     border:none;
     padding:9px 18px;
@@ -122,7 +148,7 @@
     font-weight:bold;
     cursor:pointer;
   }
-  .add-form button:hover{background:var(--red);}
+  .add-form button:hover{background:linear-gradient(90deg, var(--orange), var(--red));}
 
   .status{
     position:fixed;
@@ -150,8 +176,9 @@
 <body>
 
 <div class="wrap">
+  <div class="ribbon"></div>
   <h1>Cousinade 2026</h1>
-  <div class="sub">Qui vient, et qui ramène quoi 🍽️ — liste partagée entre tous les cousins</div>
+  <div class="sub">Qui vient, et qui ramène quoi 🍽️ — liste partagée entre tous les cousins et cousines</div>
 
   <table>
     <thead>
