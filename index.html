@@ -121,6 +121,53 @@
     font-size:16px;
   }
 
+  .recap-card{
+    background:#fff;
+    border-radius:20px;
+    padding:16px 18px;
+    margin-bottom:20px;
+    box-shadow:0 8px 24px rgba(41,26,12,0.08);
+  }
+
+  .recap-title{
+    font-family:'Fredoka', Arial, sans-serif;
+    font-weight:700;
+    font-size:16px;
+    color:var(--ink);
+    margin-bottom:10px;
+  }
+
+  .recap-row{
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+    padding:8px 0;
+    border-bottom:1px solid var(--cream);
+  }
+  .recap-row:last-child{border-bottom:none;}
+
+  .recap-cat{
+    flex:0 0 120px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:13px;
+    font-weight:bold;
+    color:#fff;
+    padding:4px 10px;
+    border-radius:999px;
+    white-space:nowrap;
+  }
+
+  .recap-items{
+    flex:1;
+    font-size:13px;
+    color:var(--ink-soft);
+    line-height:1.6;
+  }
+  .recap-items b{color:var(--ink);font-weight:bold;}
+  .recap-items .none{font-style:italic;}
+
   table{
     width:100%;
     border-collapse:collapse;
@@ -367,6 +414,9 @@
     .add-form input,
     .add-form button{padding:12px 10px;font-size:16px;}
 
+    .recap-row{flex-direction:column;gap:6px;}
+    .recap-cat{flex:none;}
+
     table{border:none;background:none;box-shadow:none;}
     thead{display:none;}
     tbody, tr, td{display:block;}
@@ -443,6 +493,11 @@
   <div class="cat-rail" id="catRail"></div>
 
   <div class="summary" id="summary"></div>
+
+  <div class="recap-card">
+    <div class="recap-title">Récapitulatif par catégorie</div>
+    <div id="recapList"></div>
+  </div>
 
   <table>
     <thead>
@@ -575,6 +630,26 @@ function renderSummary(){
   `;
 }
 
+function renderRecap(){
+  const recap = document.getElementById("recapList");
+
+  recap.innerHTML = Object.entries(CATEGORIES).map(([key, cat]) => {
+    const items = [];
+    entries.forEach(e => {
+      (e.dishes || []).forEach(d => {
+        if(d.category === key) items.push(`${escapeHtml(d.dish)} <b>(${escapeHtml(e.name)})</b>`);
+      });
+    });
+
+    return `
+      <div class="recap-row">
+        <div class="recap-cat" style="background:${cat.color}">${cat.emoji} ${cat.label}</div>
+        <div class="recap-items">${items.length ? items.join(", ") : '<span class="none">Rien de prévu pour l\'instant</span>'}</div>
+      </div>
+    `;
+  }).join("");
+}
+
 function renderRow(e){
   const isEditing = editingId === e.id;
   const isAddingDish = addingDishId === e.id;
@@ -635,6 +710,7 @@ function renderRow(e){
 function render(){
   const tbody = document.getElementById("rows");
   renderSummary();
+  renderRecap();
 
   if(entries.length === 0){
     tbody.innerHTML = `<tr class="empty-row"><td colspan="5">Personne ne s'est encore inscrit.</td></tr>`;
