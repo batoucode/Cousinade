@@ -63,6 +63,27 @@
     margin-bottom:22px;
   }
 
+  .summary{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+
+  .summary .pill{
+    background:#fff;
+    border:1px solid var(--line);
+    border-left:4px solid var(--purple);
+    border-radius:6px;
+    padding:8px 14px;
+    font-size:13px;
+    color:var(--ink-soft);
+  }
+  .summary .pill b{
+    color:var(--ink);
+    font-size:15px;
+  }
+
   table{
     width:100%;
     border-collapse:collapse;
@@ -137,6 +158,22 @@
 
   .add-form select{flex:1;min-width:130px;}
   .add-form input{flex:2;min-width:150px;}
+
+  .num-group{
+    flex:0.6;
+    min-width:80px;
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+  }
+  .num-group label{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    color:var(--ink-soft);
+    font-weight:bold;
+  }
+  .num-group input{width:100%;}
 
   .add-form button{
     background:linear-gradient(90deg, var(--red), var(--purple));
@@ -242,12 +279,16 @@
   <h1>Cousinade 2026</h1>
   <div class="sub">Qui vient, et qui ramène quoi 🍽️ — liste partagée entre tous les cousins et cousines</div>
 
+  <div class="summary" id="summary"></div>
+
   <table>
     <thead>
       <tr>
-        <th style="width:22%">Nom</th>
-        <th style="width:18%">Catégorie</th>
+        <th style="width:18%">Nom</th>
+        <th style="width:14%">Catégorie</th>
         <th>Apporte</th>
+        <th style="width:11%">Adultes</th>
+        <th style="width:11%">Enfants</th>
         <th style="width:40px"></th>
       </tr>
     </thead>
@@ -265,6 +306,14 @@
       <option value="dessert">Dessert</option>
     </select>
     <input type="text" id="inputDish" placeholder="Ce qu'il/elle ramène">
+    <div class="num-group">
+      <label for="inputAdults">Adultes</label>
+      <input type="number" id="inputAdults" min="0" value="1">
+    </div>
+    <div class="num-group">
+      <label for="inputChildren">Enfants</label>
+      <input type="number" id="inputChildren" min="0" value="0">
+    </div>
     <button id="addBtn">Ajouter</button>
   </div>
 
@@ -326,11 +375,25 @@ function escapeHtml(str){
   return div.innerHTML;
 }
 
+function renderSummary(){
+  const summary = document.getElementById("summary");
+  const adults = entries.reduce((sum, e) => sum + (e.adults || 0), 0);
+  const children = entries.reduce((sum, e) => sum + (e.children || 0), 0);
+
+  summary.innerHTML = `
+    <div class="pill">${entries.length} <b>foyer${entries.length > 1 ? "s" : ""}</b> inscrit${entries.length > 1 ? "s" : ""}</div>
+    <div class="pill"><b>${adults}</b> adulte${adults > 1 ? "s" : ""}</div>
+    <div class="pill"><b>${children}</b> enfant${children > 1 ? "s" : ""}</div>
+    <div class="pill"><b>${adults + children}</b> personne${(adults + children) > 1 ? "s" : ""} au total</div>
+  `;
+}
+
 function render(){
   const tbody = document.getElementById("rows");
+  renderSummary();
 
   if(entries.length === 0){
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="4">Personne ne s'est encore inscrit.</td></tr>`;
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="6">Personne ne s'est encore inscrit.</td></tr>`;
     return;
   }
 
@@ -341,6 +404,8 @@ function render(){
         <td data-label="Nom">${escapeHtml(e.name)}</td>
         <td data-label="Catégorie"><span class="cat-tag" style="background:${cat.color}">${cat.label}</span></td>
         <td data-label="Apporte">${escapeHtml(e.dish)}</td>
+        <td data-label="Adultes">${e.adults ?? 0}</td>
+        <td data-label="Enfants">${e.children ?? 0}</td>
         <td><button class="del-btn" data-remove="${e.id}" aria-label="Supprimer">✕</button></td>
       </tr>
     `;
@@ -355,8 +420,13 @@ async function addEntry(){
   const nameInput = document.getElementById("inputName");
   const catInput = document.getElementById("inputCat");
   const dishInput = document.getElementById("inputDish");
+  const adultsInput = document.getElementById("inputAdults");
+  const childrenInput = document.getElementById("inputChildren");
 
   if(!nameInput.value.trim() || !dishInput.value.trim()) return;
+
+  const adults = Math.max(0, parseInt(adultsInput.value, 10) || 0);
+  const children = Math.max(0, parseInt(childrenInput.value, 10) || 0);
 
   try{
     const [created] = await supabaseFetch("entries", {
@@ -365,7 +435,9 @@ async function addEntry(){
       body: JSON.stringify({
         name: nameInput.value.trim(),
         category: catInput.value,
-        dish: dishInput.value.trim()
+        dish: dishInput.value.trim(),
+        adults,
+        children
       })
     });
     entries.push(created);
@@ -376,6 +448,8 @@ async function addEntry(){
 
   nameInput.value = "";
   dishInput.value = "";
+  adultsInput.value = "1";
+  childrenInput.value = "0";
   nameInput.focus();
 
   render();
