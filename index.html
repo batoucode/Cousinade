@@ -121,14 +121,6 @@
     font-size:16px;
   }
 
-  .recap-card{
-    background:#fff;
-    border-radius:20px;
-    padding:16px 18px;
-    margin-bottom:20px;
-    box-shadow:0 8px 24px rgba(41,26,12,0.08);
-  }
-
   .recap-title{
     font-family:'Fredoka', Arial, sans-serif;
     font-weight:700;
@@ -137,18 +129,10 @@
     margin-bottom:10px;
   }
 
-  .recap-row{
-    display:flex;
-    gap:14px;
-    align-items:flex-start;
-    padding:8px 0;
-    border-bottom:1px solid var(--cream);
-  }
-  .recap-row:last-child{border-bottom:none;}
+  .recap-table{margin-bottom:20px;}
 
   .recap-cat{
-    flex:0 0 120px;
-    display:flex;
+    display:inline-flex;
     align-items:center;
     gap:6px;
     font-size:13px;
@@ -160,7 +144,6 @@
   }
 
   .recap-items{
-    flex:1;
     font-size:13px;
     color:var(--ink-soft);
     line-height:1.6;
@@ -414,14 +397,11 @@
     .add-form input,
     .add-form button{padding:12px 10px;font-size:16px;}
 
-    .recap-row{flex-direction:column;gap:6px;}
-    .recap-cat{flex:none;}
+    .data-table{border:none;background:none;box-shadow:none;}
+    .data-table thead{display:none;}
+    .data-table tbody, .data-table tr, .data-table td{display:block;}
 
-    table{border:none;background:none;box-shadow:none;}
-    thead{display:none;}
-    tbody, tr, td{display:block;}
-
-    tbody tr{
+    .data-table tbody tr{
       background:#fff;
       border:none;
       border-radius:16px;
@@ -430,9 +410,9 @@
       padding:10px 40px 10px 14px;
       position:relative;
     }
-    tbody tr:hover{background:#fff;}
+    .data-table tbody tr:hover{background:#fff;}
 
-    tbody td{
+    .data-table tbody td{
       border-bottom:none;
       padding:6px 0;
       display:flex;
@@ -441,7 +421,7 @@
       gap:10px;
       font-size:14px;
     }
-    tbody td::before{
+    .data-table tbody td::before{
       content:attr(data-label);
       font-size:11px;
       text-transform:uppercase;
@@ -450,33 +430,46 @@
       font-weight:bold;
     }
 
-    tbody td:last-child{
+    .data-table tbody td:last-child{
       position:absolute;
       top:8px;
       right:8px;
       padding:0;
     }
-    tbody td:last-child::before{content:none;}
+    .data-table tbody td:last-child::before{content:none;}
 
-    tbody td[data-label="Apporte"]{
+    .data-table tbody td[data-label="Apporte"]{
       display:block;
     }
-    tbody td[data-label="Apporte"]::before{
+    .data-table tbody td[data-label="Apporte"]::before{
       display:block;
       margin-bottom:4px;
     }
 
-    tbody td[data-label="Nom"]{
+    .data-table tbody td[data-label="Nom"]{
       padding-right:50px;
     }
 
     .icon-btn{width:32px;height:32px;font-size:15px;}
 
-    .empty-row td{
+    .data-table .empty-row td{
       padding:22px 14px;
       display:block;
     }
-    .empty-row td::before{content:none;}
+    .data-table .empty-row td::before{content:none;}
+
+    .recap-table thead{display:none;}
+    .recap-table, .recap-table tbody, .recap-table tr, .recap-table td{display:block;}
+    .recap-table{background:none;box-shadow:none;border-radius:0;}
+    .recap-table tbody tr{
+      background:#fff;
+      border-radius:16px;
+      box-shadow:0 6px 18px rgba(41,26,12,0.08);
+      margin-bottom:10px;
+      padding:12px 14px;
+    }
+    .recap-table tbody td{border-bottom:none;padding:0;}
+    .recap-table tbody td.recap-cat-cell{margin-bottom:8px;}
   }
 </style>
 </head>
@@ -494,12 +487,18 @@
 
   <div class="summary" id="summary"></div>
 
-  <div class="recap-card">
-    <div class="recap-title">Récapitulatif par catégorie</div>
-    <div id="recapList"></div>
-  </div>
+  <div class="recap-title">Récapitulatif par catégorie</div>
+  <table class="recap-table">
+    <thead>
+      <tr>
+        <th style="width:22%">Catégorie</th>
+        <th>Apporté par</th>
+      </tr>
+    </thead>
+    <tbody id="recapList"></tbody>
+  </table>
 
-  <table>
+  <table class="data-table">
     <thead>
       <tr>
         <th style="width:20%">Nom</th>
@@ -642,10 +641,10 @@ function renderRecap(){
     });
 
     return `
-      <div class="recap-row">
-        <div class="recap-cat" style="background:${cat.color}">${cat.emoji} ${cat.label}</div>
-        <div class="recap-items">${items.length ? items.join(", ") : '<span class="none">Rien de prévu pour l\'instant</span>'}</div>
-      </div>
+      <tr>
+        <td class="recap-cat-cell"><span class="recap-cat" style="background:${cat.color}">${cat.emoji} ${cat.label}</span></td>
+        <td class="recap-items">${items.length ? items.join(", ") : '<span class="none">Rien de prévu pour l\'instant</span>'}</td>
+      </tr>
     `;
   }).join("");
 }
