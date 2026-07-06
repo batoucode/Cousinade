@@ -4,18 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cousinade 2026 — Qui ramène quoi ?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --cream:#FBF5E9;
-    --ink:#2E2A22;
-    --ink-soft:#6B6255;
-    --red:#C1443A;
-    --orange:#E3852E;
-    --gold:#E3A72E;
+    --cream:#FFF6E7;
+    --ink:#2E1B12;
+    --ink-soft:#8A6A4E;
+    --red:#E63946;
+    --orange:#FF7A1A;
+    --gold:#FFB627;
     --olive:#6E7E32;
-    --purple:#8A5A9E;
-    --line:#E2D9C4;
-    --head:#F1E8D3;
+    --purple:#A6415C;
+    --line:#F2DDB0;
+    --head:#FFE3AE;
   }
 
   *{box-sizing:border-box;}
@@ -23,10 +26,11 @@
   body{
     margin:0;
     background:
-      radial-gradient(circle at 12% 0%, rgba(227,167,46,0.16), transparent 45%),
-      radial-gradient(circle at 90% 10%, rgba(138,90,158,0.14), transparent 40%),
-      radial-gradient(circle at 50% 100%, rgba(110,126,50,0.10), transparent 45%),
-      var(--cream);
+      radial-gradient(circle at 15% -10%, rgba(255,182,39,0.45), transparent 50%),
+      radial-gradient(circle at 100% 5%, rgba(230,57,70,0.30), transparent 45%),
+      radial-gradient(circle at 40% 115%, rgba(255,122,26,0.25), transparent 55%),
+      linear-gradient(180deg, #FFF8EC 0%, #FFE9C4 100%);
+    background-attachment:fixed;
     color:var(--ink);
     font-family:Arial, Helvetica, sans-serif;
     padding:32px 16px 60px;
@@ -35,53 +39,80 @@
   .wrap{max-width:900px;margin:0 auto;}
 
   .ribbon{
-    height:6px;
-    border-radius:6px;
-    margin-bottom:20px;
+    height:10px;
+    border-radius:10px;
+    margin-bottom:24px;
     background:linear-gradient(90deg,
-      var(--gold), var(--red), var(--purple), var(--olive), var(--orange));
+      var(--gold), var(--orange), var(--red), var(--purple), var(--orange), var(--gold));
+    background-size:200% 100%;
+    animation:flow 6s linear infinite;
+    box-shadow:0 4px 18px rgba(230,57,70,0.35), 0 2px 8px rgba(255,182,39,0.35);
+  }
+  @keyframes flow{
+    0%{background-position:0% 0;}
+    100%{background-position:200% 0;}
+  }
+
+  .title-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    text-align:center;
   }
 
   h1{
-    font-size:28px;
-    margin:0 0 4px;
+    font-family:'Fredoka', Arial, sans-serif;
+    font-size:52px;
+    font-weight:700;
+    margin:0;
+    letter-spacing:.01em;
     color:var(--red);
-    display:inline-block;
+    text-shadow:0 3px 0 rgba(255,182,39,0.4);
   }
   @supports (background-clip:text) or (-webkit-background-clip:text){
     h1{
-      background:linear-gradient(90deg, var(--red), var(--purple));
+      background:linear-gradient(90deg, var(--red), var(--orange), var(--gold));
       -webkit-background-clip:text;
       background-clip:text;
       color:transparent;
     }
   }
 
+  .flame{
+    font-size:40px;
+    filter:drop-shadow(0 3px 6px rgba(230,57,70,0.35));
+  }
+
   .sub{
+    text-align:center;
     color:var(--ink-soft);
-    font-size:14px;
-    margin-bottom:22px;
+    font-size:15px;
+    font-weight:bold;
+    margin:10px 0 24px;
   }
 
   .summary{
     display:flex;
     gap:10px;
     flex-wrap:wrap;
-    margin-bottom:14px;
+    justify-content:center;
+    margin-bottom:20px;
   }
 
   .summary .pill{
-    background:#fff;
+    background:linear-gradient(135deg, #fff, var(--head));
     border:1px solid var(--line);
-    border-left:4px solid var(--purple);
-    border-radius:6px;
-    padding:8px 14px;
+    border-radius:20px;
+    padding:9px 16px;
     font-size:13px;
+    font-weight:bold;
     color:var(--ink-soft);
+    box-shadow:0 3px 10px rgba(46,27,18,0.08);
   }
   .summary .pill b{
-    color:var(--ink);
-    font-size:15px;
+    color:var(--red);
+    font-size:16px;
   }
 
   table{
@@ -89,17 +120,20 @@
     border-collapse:collapse;
     background:#fff;
     border:1px solid var(--line);
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 6px 20px rgba(46,27,18,0.10);
   }
 
   thead th{
     text-align:left;
-    background:var(--head);
+    background:linear-gradient(120deg, var(--gold), var(--orange));
     font-size:13px;
     text-transform:uppercase;
-    letter-spacing:.04em;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-bottom:2px solid var(--gold);
+    letter-spacing:.05em;
+    color:#fff;
+    text-shadow:0 1px 2px rgba(0,0,0,0.15);
+    padding:12px 14px;
   }
 
   tbody td{
@@ -109,7 +143,7 @@
   }
 
   tbody tr:last-child td{border-bottom:none;}
-  tbody tr:hover{background:rgba(193,68,58,0.04);}
+  tbody tr:hover{background:rgba(255,122,26,0.06);}
 
   .empty-row td{
     color:var(--ink-soft);
@@ -121,12 +155,13 @@
   .add-form{
     display:flex;
     gap:8px;
-    margin-top:16px;
+    margin-top:18px;
     flex-wrap:wrap;
     background:#fff;
     border:1px solid var(--line);
-    padding:14px;
-    border-radius:6px;
+    padding:16px;
+    border-radius:12px;
+    box-shadow:0 6px 20px rgba(46,27,18,0.08);
   }
 
   .add-form select,
@@ -158,16 +193,24 @@
   .num-group input{width:100%;}
 
   .add-form button{
-    background:linear-gradient(90deg, var(--red), var(--purple));
+    background:linear-gradient(90deg, var(--red), var(--orange));
     color:#fff;
     border:none;
-    padding:9px 18px;
-    border-radius:5px;
+    padding:10px 22px;
+    border-radius:8px;
     font-size:14px;
     font-weight:bold;
+    text-transform:uppercase;
+    letter-spacing:.03em;
     cursor:pointer;
+    box-shadow:0 4px 14px rgba(230,57,70,0.35);
+    transition:transform .15s, box-shadow .15s;
   }
-  .add-form button:hover{background:linear-gradient(90deg, var(--orange), var(--red));}
+  .add-form button:hover{
+    background:linear-gradient(90deg, var(--orange), var(--gold));
+    transform:translateY(-1px);
+    box-shadow:0 6px 18px rgba(255,122,26,0.45);
+  }
 
   .hint{
     color:var(--ink-soft);
@@ -296,7 +339,9 @@
 
   @media (max-width: 640px){
     body{padding:20px 12px 60px;}
-    h1{font-size:22px;}
+    h1{font-size:34px;}
+    .flame{font-size:26px;}
+    .title-row{gap:8px;}
     .sub{font-size:13px;}
 
     .add-form{flex-direction:column;}
@@ -307,7 +352,7 @@
     .add-form input,
     .add-form button{padding:12px 10px;font-size:16px;}
 
-    table{border:none;background:none;}
+    table{border:none;background:none;box-shadow:none;}
     thead{display:none;}
     tbody, tr, td{display:block;}
 
@@ -373,8 +418,12 @@
 
 <div class="wrap">
   <div class="ribbon"></div>
-  <h1>Cousinade 2026</h1>
-  <div class="sub">Qui vient, et qui ramène quoi 🍽️ — liste partagée entre tous les cousins et cousines</div>
+  <div class="title-row">
+    <span class="flame">🔥</span>
+    <h1>Cousinade 2026</h1>
+    <span class="flame">🔥</span>
+  </div>
+  <div class="sub">🍖 Grillades, rires et bonne ambiance — qui vient et qui ramène quoi ? 🎉</div>
 
   <div class="summary" id="summary"></div>
 
