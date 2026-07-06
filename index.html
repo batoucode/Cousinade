@@ -118,24 +118,6 @@
     padding:22px 14px;
   }
 
-  .cat-tag{
-    display:inline-block;
-    font-size:12px;
-    font-weight:bold;
-    padding:3px 9px;
-    border-radius:12px;
-    color:#fff;
-  }
-
-  .del-btn{
-    background:none;
-    border:none;
-    color:var(--ink-soft);
-    cursor:pointer;
-    font-size:14px;
-  }
-  .del-btn:hover{color:var(--red);}
-
   .add-form{
     display:flex;
     gap:8px;
@@ -186,6 +168,109 @@
     cursor:pointer;
   }
   .add-form button:hover{background:linear-gradient(90deg, var(--orange), var(--red));}
+
+  .hint{
+    color:var(--ink-soft);
+    font-size:12px;
+    margin-top:6px;
+    font-style:italic;
+  }
+
+  .dish-list{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    align-items:center;
+  }
+
+  .dish-tag{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    font-size:12px;
+    font-weight:bold;
+    padding:3px 6px 3px 9px;
+    border-radius:12px;
+    color:#fff;
+  }
+  .dish-tag button{
+    background:rgba(255,255,255,0.3);
+    border:none;
+    color:#fff;
+    border-radius:50%;
+    width:15px;
+    height:15px;
+    font-size:10px;
+    line-height:1;
+    cursor:pointer;
+    padding:0;
+  }
+  .dish-tag button:hover{background:rgba(255,255,255,0.55);}
+
+  .add-dish-toggle{
+    background:none;
+    border:1px dashed var(--line);
+    color:var(--ink-soft);
+    border-radius:12px;
+    font-size:12px;
+    padding:3px 10px;
+    cursor:pointer;
+  }
+  .add-dish-toggle:hover{border-color:var(--red);color:var(--red);}
+
+  .add-dish-form{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+    margin-top:8px;
+    width:100%;
+  }
+  .add-dish-form select,
+  .add-dish-form input{
+    padding:6px 8px;
+    border:1px solid var(--line);
+    border-radius:5px;
+    font-size:13px;
+    font-family:inherit;
+  }
+  .add-dish-form input{flex:1;min-width:120px;}
+  .add-dish-form .mini-btn{
+    border:none;
+    border-radius:5px;
+    padding:6px 12px;
+    font-size:13px;
+    font-weight:bold;
+    cursor:pointer;
+  }
+  .add-dish-form .mini-btn.confirm{background:var(--olive);color:#fff;}
+  .add-dish-form .mini-btn.cancel{background:none;color:var(--ink-soft);}
+
+  .edit-input{
+    width:100%;
+    padding:5px 7px;
+    border:1px solid var(--line);
+    border-radius:4px;
+    font-size:14px;
+    font-family:inherit;
+  }
+
+  .actions-cell{
+    display:flex;
+    gap:6px;
+    white-space:nowrap;
+  }
+
+  .icon-btn{
+    background:none;
+    border:none;
+    color:var(--ink-soft);
+    cursor:pointer;
+    font-size:15px;
+    padding:2px;
+  }
+  .icon-btn:hover{color:var(--red);}
+  .icon-btn.save{color:var(--olive);}
+  .icon-btn.save:hover{color:var(--olive);opacity:0.7;}
 
   .status{
     position:fixed;
@@ -262,7 +347,19 @@
     }
     tbody td:last-child::before{content:none;}
 
-    .del-btn{font-size:20px;padding:8px;line-height:1;}
+    tbody td[data-label="Apporte"]{
+      display:block;
+    }
+    tbody td[data-label="Apporte"]::before{
+      display:block;
+      margin-bottom:4px;
+    }
+
+    tbody td[data-label="Nom"]{
+      padding-right:50px;
+    }
+
+    .icon-btn{font-size:20px;padding:8px;line-height:1;}
 
     .empty-row td{
       padding:22px 14px;
@@ -284,19 +381,26 @@
   <table>
     <thead>
       <tr>
-        <th style="width:18%">Nom</th>
-        <th style="width:14%">Catégorie</th>
+        <th style="width:20%">Nom</th>
+        <th style="width:10%">Adultes</th>
+        <th style="width:10%">Enfants</th>
         <th>Apporte</th>
-        <th style="width:11%">Adultes</th>
-        <th style="width:11%">Enfants</th>
-        <th style="width:40px"></th>
+        <th style="width:70px"></th>
       </tr>
     </thead>
     <tbody id="rows"></tbody>
   </table>
 
   <div class="add-form">
-    <input type="text" id="inputName" placeholder="Nom">
+    <input type="text" id="inputName" placeholder="Nom (existant ou nouveau)">
+    <div class="num-group">
+      <label for="inputAdults">Adultes</label>
+      <input type="number" id="inputAdults" min="0" value="1">
+    </div>
+    <div class="num-group">
+      <label for="inputChildren">Enfants</label>
+      <input type="number" id="inputChildren" min="0" value="0">
+    </div>
     <select id="inputCat">
       <option value="apero">Apéro</option>
       <option value="barbecue">Barbecue</option>
@@ -306,16 +410,9 @@
       <option value="dessert">Dessert</option>
     </select>
     <input type="text" id="inputDish" placeholder="Ce qu'il/elle ramène">
-    <div class="num-group">
-      <label for="inputAdults">Adultes</label>
-      <input type="number" id="inputAdults" min="0" value="1">
-    </div>
-    <div class="num-group">
-      <label for="inputChildren">Enfants</label>
-      <input type="number" id="inputChildren" min="0" value="0">
-    </div>
     <button id="addBtn">Ajouter</button>
   </div>
+  <div class="hint">Astuce : si le nom existe déjà, le plat vient s'ajouter à cette même personne au lieu de créer une nouvelle ligne.</div>
 
   <footer>Les modifications sont enregistrées automatiquement et visibles par tous.</footer>
 </div>
@@ -336,6 +433,8 @@ const SUPABASE_URL = "https://ejgmecoqzejdtuwfzwia.supabase.co";
 const SUPABASE_KEY = "sb_publishable_C6pCeS5t1h27nIJK4MVuLA_HEuw7pI4";
 
 let entries = [];
+let editingId = null;
+let addingDishId = null;
 
 function showStatus(msg){
   const el = document.getElementById("status");
@@ -361,7 +460,10 @@ async function supabaseFetch(path, options = {}){
 
 async function loadEntries(){
   try{
-    entries = await supabaseFetch("entries?select=*&order=created_at.asc");
+    entries = await supabaseFetch("entries?select=*,dishes(*)&order=created_at.asc");
+    entries.forEach(e => {
+      e.dishes = (e.dishes || []).sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    });
   }catch(e){
     entries = [];
     showStatus("Erreur de chargement");
@@ -373,6 +475,15 @@ function escapeHtml(str){
   const div = document.createElement("div");
   div.textContent = str;
   return div.innerHTML;
+}
+
+function escapeAttr(str){
+  return escapeHtml(str).replace(/"/g, "&quot;");
+}
+
+function findEntryByName(name){
+  const key = name.trim().toLowerCase();
+  return entries.find(e => e.name.trim().toLowerCase() === key);
 }
 
 function renderSummary(){
@@ -388,32 +499,161 @@ function renderSummary(){
   `;
 }
 
+function renderRow(e){
+  const isEditing = editingId === e.id;
+  const isAddingDish = addingDishId === e.id;
+
+  const nameCell = isEditing
+    ? `<input class="edit-input" type="text" id="edit-name-${e.id}" value="${escapeAttr(e.name)}">`
+    : escapeHtml(e.name);
+
+  const adultsCell = isEditing
+    ? `<input class="edit-input" type="number" min="0" id="edit-adults-${e.id}" value="${e.adults ?? 0}">`
+    : `${e.adults ?? 0}`;
+
+  const childrenCell = isEditing
+    ? `<input class="edit-input" type="number" min="0" id="edit-children-${e.id}" value="${e.children ?? 0}">`
+    : `${e.children ?? 0}`;
+
+  const dishTags = (e.dishes || []).map(d => {
+    const cat = CATEGORIES[d.category] || { label: d.category, color: "#999" };
+    return `<span class="dish-tag" style="background:${cat.color}">${escapeHtml(d.dish)}<button data-remove-dish="${d.id}" data-entry="${e.id}" aria-label="Retirer ce plat">×</button></span>`;
+  }).join("");
+
+  const addDishForm = isAddingDish ? `
+    <div class="add-dish-form">
+      <select id="dish-cat-${e.id}">
+        ${Object.entries(CATEGORIES).map(([key, val]) => `<option value="${key}">${val.label}</option>`).join("")}
+      </select>
+      <input type="text" id="dish-text-${e.id}" placeholder="Quoi ?">
+      <button class="mini-btn confirm" data-confirm-add-dish="${e.id}">OK</button>
+      <button class="mini-btn cancel" data-cancel-add-dish="${e.id}">Annuler</button>
+    </div>
+  ` : "";
+
+  const dishesCell = `
+    <div class="dish-list">
+      ${dishTags}
+      <button class="add-dish-toggle" data-toggle-add-dish="${e.id}">${isAddingDish ? "− masquer" : "+ ajouter"}</button>
+    </div>
+    ${addDishForm}
+  `;
+
+  const actionsCell = isEditing
+    ? `<button class="icon-btn save" data-save-edit="${e.id}" aria-label="Enregistrer">✓</button>
+       <button class="icon-btn" data-cancel-edit="${e.id}" aria-label="Annuler">✕</button>`
+    : `<button class="icon-btn" data-edit="${e.id}" aria-label="Modifier">✎</button>
+       <button class="icon-btn" data-remove="${e.id}" aria-label="Supprimer">✕</button>`;
+
+  return `
+    <tr data-id="${e.id}">
+      <td data-label="Nom">${nameCell}</td>
+      <td data-label="Adultes">${adultsCell}</td>
+      <td data-label="Enfants">${childrenCell}</td>
+      <td data-label="Apporte">${dishesCell}</td>
+      <td class="actions-cell">${actionsCell}</td>
+    </tr>
+  `;
+}
+
 function render(){
   const tbody = document.getElementById("rows");
   renderSummary();
 
   if(entries.length === 0){
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="6">Personne ne s'est encore inscrit.</td></tr>`;
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="5">Personne ne s'est encore inscrit.</td></tr>`;
     return;
   }
 
-  tbody.innerHTML = entries.map(e => {
-    const cat = CATEGORIES[e.category] || { label: e.category, color: "#999" };
-    return `
-      <tr data-id="${e.id}">
-        <td data-label="Nom">${escapeHtml(e.name)}</td>
-        <td data-label="Catégorie"><span class="cat-tag" style="background:${cat.color}">${cat.label}</span></td>
-        <td data-label="Apporte">${escapeHtml(e.dish)}</td>
-        <td data-label="Adultes">${e.adults ?? 0}</td>
-        <td data-label="Enfants">${e.children ?? 0}</td>
-        <td><button class="del-btn" data-remove="${e.id}" aria-label="Supprimer">✕</button></td>
-      </tr>
-    `;
-  }).join("");
+  tbody.innerHTML = entries.map(renderRow).join("");
 
   tbody.querySelectorAll("[data-remove]").forEach(btn => {
     btn.addEventListener("click", () => removeEntry(btn.dataset.remove));
   });
+  tbody.querySelectorAll("[data-remove-dish]").forEach(btn => {
+    btn.addEventListener("click", () => removeDish(btn.dataset.removeDish, btn.dataset.entry));
+  });
+  tbody.querySelectorAll("[data-edit]").forEach(btn => {
+    btn.addEventListener("click", () => { editingId = btn.dataset.edit; addingDishId = null; render(); });
+  });
+  tbody.querySelectorAll("[data-cancel-edit]").forEach(btn => {
+    btn.addEventListener("click", () => { editingId = null; render(); });
+  });
+  tbody.querySelectorAll("[data-save-edit]").forEach(btn => {
+    btn.addEventListener("click", () => saveEdit(btn.dataset.saveEdit));
+  });
+  tbody.querySelectorAll("[data-toggle-add-dish]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      addingDishId = addingDishId === btn.dataset.toggleAddDish ? null : btn.dataset.toggleAddDish;
+      editingId = null;
+      render();
+    });
+  });
+  tbody.querySelectorAll("[data-cancel-add-dish]").forEach(btn => {
+    btn.addEventListener("click", () => { addingDishId = null; render(); });
+  });
+  tbody.querySelectorAll("[data-confirm-add-dish]").forEach(btn => {
+    btn.addEventListener("click", () => confirmAddDish(btn.dataset.confirmAddDish));
+  });
+}
+
+async function saveEdit(id){
+  const name = document.getElementById(`edit-name-${id}`).value.trim();
+  const adults = Math.max(0, parseInt(document.getElementById(`edit-adults-${id}`).value, 10) || 0);
+  const children = Math.max(0, parseInt(document.getElementById(`edit-children-${id}`).value, 10) || 0);
+
+  if(!name) return;
+
+  try{
+    await supabaseFetch(`entries?id=eq.${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ name, adults, children })
+    });
+    const entry = entries.find(e => e.id === id);
+    entry.name = name;
+    entry.adults = adults;
+    entry.children = children;
+    showStatus("Modifié");
+  }catch(e){
+    showStatus("Erreur de modification");
+  }
+  editingId = null;
+  render();
+}
+
+async function confirmAddDish(entryId){
+  const catSelect = document.getElementById(`dish-cat-${entryId}`);
+  const textInput = document.getElementById(`dish-text-${entryId}`);
+  const dish = textInput.value.trim();
+  if(!dish) return;
+
+  try{
+    const [created] = await supabaseFetch("dishes", {
+      method: "POST",
+      headers: { "Prefer": "return=representation" },
+      body: JSON.stringify({ entry_id: entryId, category: catSelect.value, dish })
+    });
+    const entry = entries.find(e => e.id === entryId);
+    entry.dishes = entry.dishes || [];
+    entry.dishes.push(created);
+    showStatus("Plat ajouté");
+  }catch(e){
+    showStatus("Erreur d'enregistrement");
+  }
+  addingDishId = null;
+  render();
+}
+
+async function removeDish(dishId, entryId){
+  try{
+    await supabaseFetch(`dishes?id=eq.${dishId}`, { method: "DELETE" });
+    const entry = entries.find(e => e.id === entryId);
+    if(entry) entry.dishes = entry.dishes.filter(d => d.id !== dishId);
+    showStatus("Plat retiré");
+  }catch(e){
+    showStatus("Erreur de suppression");
+  }
+  render();
 }
 
 async function addEntry(){
@@ -423,25 +663,39 @@ async function addEntry(){
   const adultsInput = document.getElementById("inputAdults");
   const childrenInput = document.getElementById("inputChildren");
 
-  if(!nameInput.value.trim() || !dishInput.value.trim()) return;
+  const name = nameInput.value.trim();
+  const dish = dishInput.value.trim();
+  if(!name || !dish) return;
 
   const adults = Math.max(0, parseInt(adultsInput.value, 10) || 0);
   const children = Math.max(0, parseInt(childrenInput.value, 10) || 0);
+  const existing = findEntryByName(name);
 
   try{
-    const [created] = await supabaseFetch("entries", {
-      method: "POST",
-      headers: { "Prefer": "return=representation" },
-      body: JSON.stringify({
-        name: nameInput.value.trim(),
-        category: catInput.value,
-        dish: dishInput.value.trim(),
-        adults,
-        children
-      })
-    });
-    entries.push(created);
-    showStatus("Enregistré");
+    if(existing){
+      const [createdDish] = await supabaseFetch("dishes", {
+        method: "POST",
+        headers: { "Prefer": "return=representation" },
+        body: JSON.stringify({ entry_id: existing.id, category: catInput.value, dish })
+      });
+      existing.dishes = existing.dishes || [];
+      existing.dishes.push(createdDish);
+      showStatus(`Plat ajouté à ${existing.name}`);
+    }else{
+      const [createdEntry] = await supabaseFetch("entries", {
+        method: "POST",
+        headers: { "Prefer": "return=representation" },
+        body: JSON.stringify({ name, adults, children })
+      });
+      const [createdDish] = await supabaseFetch("dishes", {
+        method: "POST",
+        headers: { "Prefer": "return=representation" },
+        body: JSON.stringify({ entry_id: createdEntry.id, category: catInput.value, dish })
+      });
+      createdEntry.dishes = [createdDish];
+      entries.push(createdEntry);
+      showStatus("Enregistré");
+    }
   }catch(e){
     showStatus("Erreur d'enregistrement");
   }
