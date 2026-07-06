@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cousinade 2026 — Qui ramène quoi ?</title>
+<style>
+  :root{
+    --cream:#FBF5E9;
+    --ink:#2E2A22;
+    --ink-soft:#6B6255;
+    --red:#C1443A;
+    --line:#E2D9C4;
+    --head:#F1E8D3;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:Arial, Helvetica, sans-serif;
+    padding:32px 16px 60px;
+  }
+
+  .wrap{max-width:900px;margin:0 auto;}
+
+  h1{
+    font-size:28px;
+    margin:0 0 4px;
+  }
+
+  .sub{
+    color:var(--ink-soft);
+    font-size:14px;
+    margin-bottom:22px;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+    border:1px solid var(--line);
+  }
+
+  thead th{
+    text-align:left;
+    background:var(--head);
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    color:var(--ink-soft);
+    padding:10px 14px;
+    border-bottom:1px solid var(--line);
+  }
+
+  tbody td{
+    padding:10px 14px;
+    border-bottom:1px solid var(--line);
+    font-size:15px;
+  }
+
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:rgba(193,68,58,0.04);}
+
+  .empty-row td{
+    color:var(--ink-soft);
+    font-style:italic;
+    text-align:center;
+    padding:22px 14px;
+  }
+
+  .cat-tag{
+    display:inline-block;
+    font-size:12px;
+    font-weight:bold;
+    padding:3px 9px;
+    border-radius:12px;
+    color:#fff;
+  }
+
+  .del-btn{
+    background:none;
+    border:none;
+    color:var(--ink-soft);
+    cursor:pointer;
+    font-size:14px;
+  }
+  .del-btn:hover{color:var(--red);}
+
+  .add-form{
+    display:flex;
+    gap:8px;
+    margin-top:16px;
+    flex-wrap:wrap;
+    background:#fff;
+    border:1px solid var(--line);
+    padding:14px;
+    border-radius:6px;
+  }
+
+  .add-form select,
+  .add-form input{
+    padding:9px 10px;
+    border:1px solid var(--line);
+    border-radius:5px;
+    font-size:14px;
+    font-family:inherit;
+  }
+
+  .add-form select{flex:1;min-width:130px;}
+  .add-form input{flex:2;min-width:150px;}
+
+  .add-form button{
+    background:var(--ink);
+    color:#fff;
+    border:none;
+    padding:9px 18px;
+    border-radius:5px;
+    font-size:14px;
+    font-weight:bold;
+    cursor:pointer;
+  }
+  .add-form button:hover{background:var(--red);}
+
+  .status{
+    position:fixed;
+    bottom:18px;
+    left:50%;
+    transform:translateX(-50%);
+    background:var(--ink);
+    color:#fff;
+    font-size:12px;
+    padding:8px 16px;
+    border-radius:20px;
+    opacity:0;
+    transition:opacity .25s;
+  }
+  .status.show{opacity:1;}
+
+  footer{
+    text-align:center;
+    margin-top:20px;
+    color:var(--ink-soft);
+    font-size:12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>Cousinade 2026</h1>
+  <div class="sub">Qui vient, et qui ramène quoi 🍽️ — liste partagée entre tous les cousins</div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:22%">Nom</th>
+        <th style="width:18%">Catégorie</th>
+        <th>Apporte</th>
+        <th style="width:40px"></th>
+      </tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+  <div class="add-form">
+    <input type="text" id="inputName" placeholder="Nom">
+    <select id="inputCat">
+      <option value="apero">Apéro</option>
+      <option value="barbecue">Barbecue</option>
+      <option value="entree">Entrée</option>
+      <option value="plat">Plat</option>
+      <option value="fromage">Fromage</option>
+      <option value="dessert">Dessert</option>
+    </select>
+    <input type="text" id="inputDish" placeholder="Ce qu'il/elle ramène">
+    <button id="addBtn">Ajouter</button>
+  </div>
+
+  <footer>Les modifications sont enregistrées automatiquement et visibles par tous.</footer>
+</div>
+
+<div class="status" id="status">Enregistré</div>
+
+<script>
+const CATEGORIES = {
+  apero:    { label: "Apéro",    color: "#E3A72E" },
+  barbecue: { label: "Barbecue", color: "#C1443A" },
+  entree:   { label: "Entrée",   color: "#6E7E32" },
+  plat:     { label: "Plat",     color: "#B8562D" },
+  fromage:  { label: "Fromage",  color: "#C99A3A" },
+  dessert:  { label: "Dessert",  color: "#8A5A9E" },
+};
+
+const STORAGE_KEY = "cousinade-2026:entries";
+let entries = [];
+
+function uid(){
+  return Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+}
+
+function showStatus(msg){
+  const el = document.getElementById("status");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(el._t);
+  el._t = setTimeout(()=>el.classList.remove("show"), 1400);
+}
+
+async function loadEntries(){
+  try{
+    const res = await window.storage.get(STORAGE_KEY, true);
+    entries = res && res.value ? JSON.parse(res.value) : [];
+  }catch(e){
+    entries = [];
+  }
+  render();
+}
+
+async function saveEntries(){
+  try{
+    await window.storage.set(STORAGE_KEY, JSON.stringify(entries), true);
+    showStatus("Enregistré");
+  }catch(e){
+    showStatus("Erreur d'enregistrement");
+  }
+}
+
+function escapeHtml(str){
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function render(){
+  const tbody = document.getElementById("rows");
+
+  if(entries.length === 0){
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="4">Personne ne s'est encore inscrit.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = entries.map(e => {
+    const cat = CATEGORIES[e.category] || { label: e.category, color: "#999" };
+    return `
+      <tr data-id="${e.id}">
+        <td>${escapeHtml(e.name)}</td>
+        <td><span class="cat-tag" style="background:${cat.color}">${cat.label}</span></td>
+        <td>${escapeHtml(e.dish)}</td>
+        <td><button class="del-btn" data-remove="${e.id}" aria-label="Supprimer">✕</button></td>
+      </tr>
+    `;
+  }).join("");
+
+  tbody.querySelectorAll("[data-remove]").forEach(btn => {
+    btn.addEventListener("click", () => removeEntry(btn.dataset.remove));
+  });
+}
+
+function addEntry(){
+  const nameInput = document.getElementById("inputName");
+  const catInput = document.getElementById("inputCat");
+  const dishInput = document.getElementById("inputDish");
+
+  if(!nameInput.value.trim() || !dishInput.value.trim()) return;
+
+  entries.push({
+    id: uid(),
+    name: nameInput.value.trim(),
+    category: catInput.value,
+    dish: dishInput.value.trim()
+  });
+
+  nameInput.value = "";
+  dishInput.value = "";
+  nameInput.focus();
+
+  saveEntries();
+  render();
+}
+
+function removeEntry(id){
+  entries = entries.filter(e => e.id !== id);
+  saveEntries();
+  render();
+}
+
+document.getElementById("addBtn").addEventListener("click", addEntry);
+document.getElementById("inputDish").addEventListener("keydown", (e) => {
+  if(e.key === "Enter") addEntry();
+});
+document.getElementById("inputName").addEventListener("keydown", (e) => {
+  if(e.key === "Enter") document.getElementById("inputDish").focus();
+});
+
+loadEntries();
+</script>
+
+</body>
+</html>
