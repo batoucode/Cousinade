@@ -194,12 +194,10 @@ const CATEGORIES = {
   dessert:  { label: "Dessert",  color: "#8A5A9E" },
 };
 
-const STORAGE_KEY = "cousinade-2026:entries";
-let entries = [];
+const SUPABASE_URL = "https://ejgmecoqzejdtuwfzwia.supabase.co";
+const SUPABASE_KEY = "sb_publishable_C6pCeS5t1h27nIJK4MVuLA_HEuw7pI4";
 
-function uid(){
-  return Date.now().toString(36) + Math.random().toString(36).slice(2,7);
-}
+let entries = [];
 
 function showStatus(msg){
   const el = document.getElementById("status");
@@ -209,23 +207,28 @@ function showStatus(msg){
   el._t = setTimeout(()=>el.classList.remove("show"), 1400);
 }
 
-async function loadEntries(){
-  try{
-    const res = await window.storage.get(STORAGE_KEY, true);
-    entries = res && res.value ? JSON.parse(res.value) : [];
-  }catch(e){
-    entries = [];
-  }
-  render();
+async function supabaseFetch(path, options = {}){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    ...options,
+    headers: {
+      "apikey": SUPABASE_KEY,
+      "Authorization": `Bearer ${SUPABASE_KEY}`,
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+  if(!res.ok) throw new Error(`Supabase error ${res.status}`);
+  return res.status === 204 ? null : res.json();
 }
 
-async function saveEntries(){
+async function loadEntries(){
   try{
-    await window.storage.set(STORAGE_KEY, JSON.stringify(entries), true);
-    showStatus("Enregistré");
+    entries = await supabaseFetch("entries?select=*&order=created_at.asc");
   }catch(e){
-    showStatus("Erreur d'enregistrement");
+    entries = [];
+    showStatus("Erreur de chargement");
   }
+  render();
 }
 
 function escapeHtml(str){
@@ -259,31 +262,44 @@ function render(){
   });
 }
 
-function addEntry(){
+async function addEntry(){
   const nameInput = document.getElementById("inputName");
   const catInput = document.getElementById("inputCat");
   const dishInput = document.getElementById("inputDish");
 
   if(!nameInput.value.trim() || !dishInput.value.trim()) return;
 
-  entries.push({
-    id: uid(),
-    name: nameInput.value.trim(),
-    category: catInput.value,
-    dish: dishInput.value.trim()
-  });
+  try{
+    const [created] = await supabaseFetch("entries", {
+      method: "POST",
+      headers: { "Prefer": "return=representation" },
+      body: JSON.stringify({
+        name: nameInput.value.trim(),
+        category: catInput.value,
+        dish: dishInput.value.trim()
+      })
+    });
+    entries.push(created);
+    showStatus("Enregistré");
+  }catch(e){
+    showStatus("Erreur d'enregistrement");
+  }
 
   nameInput.value = "";
   dishInput.value = "";
   nameInput.focus();
 
-  saveEntries();
   render();
 }
 
-function removeEntry(id){
-  entries = entries.filter(e => e.id !== id);
-  saveEntries();
+async function removeEntry(id){
+  try{
+    await supabaseFetch(`entries?id=eq.${id}`, { method: "DELETE" });
+    entries = entries.filter(e => e.id !== id);
+    showStatus("Supprimé");
+  }catch(e){
+    showStatus("Erreur de suppression");
+  }
   render();
 }
 
