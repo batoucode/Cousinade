@@ -404,6 +404,9 @@ async function loadGallery(){
   const gallery = document.getElementById("gallery");
   gallery.innerHTML = `<div class="empty-gallery">Chargement…</div>`;
 
+  let storagePhotos = [];
+  let linkedPhotos = [];
+
   try{
     const res = await fetch(`${SUPABASE_URL}/storage/v1/object/list/${BUCKET}`, {
       method: "POST",
@@ -418,33 +421,41 @@ async function loadGallery(){
         sortBy: { column: "created_at", order: "desc" }
       })
     });
-    if(!res.ok) throw new Error(`Storage error ${res.status}`);
-    const files = (await res.json()).filter(f => f.id);
-
-    if(files.length === 0){
-      gallery.innerHTML = `<div class="empty-gallery">Aucune photo pour ${selectedYear} pour l'instant.</div>`;
-      return;
+    if(res.ok){
+      storagePhotos = (await res.json()).filter(f => f.id).map(f => ({
+        type: "storage", name: f.name, url: publicUrl(f.name)
+      }));
     }
+  }catch(e){}
 
-    gallery.innerHTML = files.map(f => `
-      <div class="photo-card" data-name="${f.name}">
-        <img src="${publicUrl(f.name)}" alt="Photo Cousinade ${selectedYear}" loading="lazy">
-        <button class="photo-del" data-name="${f.name}" aria-label="Supprimer">✕</button>
-      </div>
-    `).join("");
+  try{
+    const rows = await restFetch(`photo_links?year=eq.${selectedYear}&select=id,url&order=created_at.asc`);
+    linkedPhotos = rows.map(r => ({ type: "link", id: r.id, url: r.url }));
+  }catch(e){}
 
-    gallery.querySelectorAll(".photo-card img").forEach(img => {
-      img.addEventListener("click", () => openLightbox(img.src));
-    });
-    gallery.querySelectorAll(".photo-del").forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        deletePhoto(btn.dataset.name);
-      });
-    });
-  }catch(e){
-    gallery.innerHTML = `<div class="empty-gallery">Erreur de chargement des photos.</div>`;
+  const allPhotos = [...linkedPhotos, ...storagePhotos];
+
+  if(allPhotos.length === 0){
+    gallery.innerHTML = `<div class="empty-gallery">Aucune photo pour ${selectedYear} pour l'instant.</div>`;
+    return;
   }
+
+  gallery.innerHTML = allPhotos.map(p => `
+    <div class="photo-card">
+      <img src="${p.url}" alt="Photo Cousinade ${selectedYear}" loading="lazy">
+      ${p.type === "storage" ? `<button class="photo-del" data-name="${p.name}" aria-label="Supprimer">✕</button>` : ""}
+    </div>
+  `).join("");
+
+  gallery.querySelectorAll(".photo-card img").forEach(img => {
+    img.addEventListener("click", () => openLightbox(img.src));
+  });
+  gallery.querySelectorAll(".photo-del").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      deletePhoto(btn.dataset.name);
+    });
+  });
 }
 
 async function uploadFiles(fileList){
