@@ -538,7 +538,7 @@
   <img src="images/logo-cousinade.png" alt="Cousinade — La grande famille" class="site-logo">
   <div class="title-row">
     <span class="flame">🔥</span>
-    <h1 id="pageTitle">Cousinade</h1>
+    <h1 id="pageTitle">···</h1>
     <span class="flame">🔥</span>
   </div>
   <div class="sub">Grillades, rires et bonne ambiance — qui vient et qui ramène quoi ?</div>
@@ -665,7 +665,7 @@ async function loadCurrentYear(){
   }catch(e){
     CURRENT_YEAR = new Date().getFullYear();
   }
-  document.getElementById("pageTitle").textContent = `Cousinade ${CURRENT_YEAR}`;
+  document.getElementById("pageTitle").textContent = CURRENT_YEAR;
   document.getElementById("pageTabTitle").textContent = `Cousinade ${CURRENT_YEAR} — Qui ramène quoi ?`;
 }
 
