@@ -35,6 +35,15 @@
 
   .wrap{max-width:900px;margin:0 auto;}
 
+  .site-logo{
+    display:block;
+    width:150px;
+    height:150px;
+    margin:0 auto 10px;
+    border-radius:50%;
+    box-shadow:0 8px 24px rgba(41,26,12,0.15);
+  }
+
   .title-row{
     display:flex;
     align-items:center;
@@ -261,6 +270,7 @@
 
   @media (max-width: 640px){
     body{padding:20px 12px 60px;}
+    .site-logo{width:110px;height:110px;}
     h1{font-size:34px;}
     .flame{font-size:26px;}
     .title-row{gap:8px;}
@@ -313,6 +323,7 @@
 <body>
 
 <div class="wrap">
+  <img src="images/logo-cousinade.png" alt="Cousinade — La grande famille" class="site-logo">
   <div class="title-row">
     <span class="flame">🗄️</span>
     <h1>Archives</h1>
