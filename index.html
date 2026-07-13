@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cousinade 2026 — Qui ramène quoi ?</title>
+<title id="pageTabTitle">Cousinade — Qui ramène quoi ?</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
@@ -63,6 +63,31 @@
     font-weight:bold;
     margin:10px 0 20px;
   }
+
+  .nav-tabs{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:24px;
+  }
+
+  .nav-tab{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:8px 18px;
+    border-radius:999px;
+    background:#fff;
+    color:var(--ink-soft);
+    font-weight:bold;
+    font-size:13px;
+    text-decoration:none;
+    box-shadow:0 4px 14px rgba(41,26,12,0.08);
+    transition:background .15s, color .15s;
+  }
+  .nav-tab:hover{background:var(--head);}
+  .nav-tab.active{background:var(--coral);color:#fff;}
 
   .cat-rail{
     display:flex;
@@ -502,10 +527,16 @@
 <div class="wrap">
   <div class="title-row">
     <span class="flame">🔥</span>
-    <h1>Cousinade 2026</h1>
+    <h1 id="pageTitle">Cousinade</h1>
     <span class="flame">🔥</span>
   </div>
   <div class="sub">Grillades, rires et bonne ambiance — qui vient et qui ramène quoi ?</div>
+
+  <div class="nav-tabs">
+    <a href="index.html" class="nav-tab active">🏠 Accueil</a>
+    <a href="archive.html" class="nav-tab">🗄️ Archives</a>
+    <a href="photos.html" class="nav-tab">📸 Photos</a>
+  </div>
 
   <div class="cat-rail" id="catRail"></div>
 
@@ -592,6 +623,7 @@ const SUPABASE_KEY = "sb_publishable_C6pCeS5t1h27nIJK4MVuLA_HEuw7pI4";
 let entries = [];
 let editingId = null;
 let addingDishId = null;
+let CURRENT_YEAR = null;
 
 function showStatus(msg){
   const el = document.getElementById("status");
@@ -615,9 +647,20 @@ async function supabaseFetch(path, options = {}){
   return res.status === 204 ? null : res.json();
 }
 
+async function loadCurrentYear(){
+  try{
+    const rows = await supabaseFetch("app_settings?key=eq.current_year&select=value");
+    CURRENT_YEAR = rows && rows[0] ? parseInt(rows[0].value, 10) : new Date().getFullYear();
+  }catch(e){
+    CURRENT_YEAR = new Date().getFullYear();
+  }
+  document.getElementById("pageTitle").textContent = `Cousinade ${CURRENT_YEAR}`;
+  document.getElementById("pageTabTitle").textContent = `Cousinade ${CURRENT_YEAR} — Qui ramène quoi ?`;
+}
+
 async function loadEntries(){
   try{
-    entries = await supabaseFetch("entries?select=*,dishes(*)&order=created_at.asc");
+    entries = await supabaseFetch(`entries?select=*,dishes(*)&year=eq.${CURRENT_YEAR}&order=created_at.asc`);
     entries.forEach(e => {
       e.dishes = (e.dishes || []).sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
     });
@@ -863,7 +906,7 @@ async function addEntry(){
       const [createdEntry] = await supabaseFetch("entries", {
         method: "POST",
         headers: { "Prefer": "return=representation" },
-        body: JSON.stringify({ name, adults, children })
+        body: JSON.stringify({ name, adults, children, year: CURRENT_YEAR })
       });
       const [createdDish] = await supabaseFetch("dishes", {
         method: "POST",
@@ -907,7 +950,7 @@ document.getElementById("inputName").addEventListener("keydown", (e) => {
 });
 
 renderCatRail();
-loadEntries();
+loadCurrentYear().then(loadEntries);
 </script>
 
 </body>

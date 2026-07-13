@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTabTitle">Cousinade — Archives</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBEAD2;
+    --ink:#291A0C;
+    --ink-soft:#9A7F63;
+    --red:#E63946;
+    --orange:#FF7A1A;
+    --coral:#FF6B4A;
+    --coral-dark:#E8562F;
+    --gold:#FFB627;
+    --olive:#6E7E32;
+    --purple:#A6415C;
+    --line:#F0DDBF;
+    --head:#FBEAD2;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:Arial, Helvetica, sans-serif;
+    padding:32px 16px 60px;
+  }
+
+  .wrap{max-width:900px;margin:0 auto;}
+
+  .title-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    text-align:center;
+  }
+
+  h1{
+    font-family:'Fredoka', Arial, sans-serif;
+    font-size:52px;
+    font-weight:700;
+    margin:0;
+    letter-spacing:.01em;
+    color:var(--coral);
+  }
+
+  .flame{font-size:36px;}
+
+  .sub{
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:15px;
+    font-weight:bold;
+    margin:10px 0 20px;
+  }
+
+  .nav-tabs{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:24px;
+  }
+
+  .nav-tab{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:8px 18px;
+    border-radius:999px;
+    background:#fff;
+    color:var(--ink-soft);
+    font-weight:bold;
+    font-size:13px;
+    text-decoration:none;
+    box-shadow:0 4px 14px rgba(41,26,12,0.08);
+    transition:background .15s, color .15s;
+  }
+  .nav-tab:hover{background:var(--head);}
+  .nav-tab.active{background:var(--coral);color:#fff;}
+
+  .year-picker{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:22px;
+    flex-wrap:wrap;
+  }
+
+  .year-picker label{
+    font-weight:bold;
+    font-size:13px;
+    color:var(--ink-soft);
+  }
+
+  .year-picker select{
+    padding:9px 14px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    font-size:14px;
+    font-family:inherit;
+    font-weight:bold;
+    background:#fff;
+    color:var(--ink);
+  }
+
+  .archive-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:#fff;
+    border-radius:999px;
+    padding:6px 14px;
+    font-size:12px;
+    font-weight:bold;
+    color:var(--ink-soft);
+  }
+
+  .summary{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-bottom:20px;
+  }
+
+  .summary .pill{
+    background:#fff;
+    border-radius:999px;
+    padding:9px 18px;
+    font-size:13px;
+    font-weight:bold;
+    color:var(--ink-soft);
+    box-shadow:0 4px 14px rgba(41,26,12,0.10);
+  }
+  .summary .pill b{
+    color:var(--coral);
+    font-size:16px;
+  }
+
+  .recap-title{
+    font-family:'Fredoka', Arial, sans-serif;
+    font-weight:700;
+    font-size:16px;
+    color:var(--ink);
+    margin-bottom:10px;
+  }
+
+  .recap-table{margin-bottom:20px;}
+
+  .recap-cat{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:13px;
+    font-weight:bold;
+    color:#fff;
+    padding:4px 10px;
+    border-radius:999px;
+    white-space:nowrap;
+  }
+
+  .recap-items{
+    font-size:13px;
+    color:var(--ink-soft);
+    line-height:1.6;
+  }
+  .recap-items b{color:var(--ink);font-weight:bold;}
+  .recap-items .none{font-style:italic;}
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+    border:none;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 8px 24px rgba(41,26,12,0.08);
+  }
+
+  thead th{
+    text-align:left;
+    background:#fff;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    color:var(--ink-soft);
+    padding:14px 14px;
+    border-bottom:2px solid var(--cream);
+  }
+
+  tbody td{
+    padding:12px 14px;
+    border-bottom:1px solid var(--cream);
+    font-size:15px;
+  }
+
+  tbody tr:last-child td{border-bottom:none;}
+
+  .empty-row td{
+    color:var(--ink-soft);
+    font-style:italic;
+    text-align:center;
+    padding:22px 14px;
+  }
+
+  .dish-list{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    align-items:center;
+  }
+
+  .dish-tag{
+    display:inline-flex;
+    align-items:center;
+    font-size:12px;
+    font-weight:bold;
+    padding:4px 10px;
+    border-radius:999px;
+    color:#fff;
+    box-shadow:0 2px 6px rgba(41,26,12,0.12);
+  }
+
+  footer{
+    text-align:center;
+    margin-top:20px;
+    color:var(--ink-soft);
+    font-size:12px;
+  }
+
+  .credit{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    margin-top:10px;
+    color:var(--ink-soft);
+    font-size:13px;
+    text-decoration:none;
+  }
+  .credit:hover .credit-des{color:var(--ink);}
+  .credit:hover .credit-codes{color:var(--coral-dark);}
+  .credit-logo{display:inline-flex;align-items:center;}
+  .credit-icon{
+    color:var(--coral);
+    font-weight:bold;
+    font-family:'Courier New', monospace;
+    margin-right:4px;
+  }
+  .credit-des{font-weight:bold;letter-spacing:.02em;color:var(--ink-soft);}
+  .credit-codes{font-weight:bold;letter-spacing:.02em;color:var(--coral);}
+
+  @media (max-width: 640px){
+    body{padding:20px 12px 60px;}
+    h1{font-size:34px;}
+    .flame{font-size:26px;}
+    .title-row{gap:8px;}
+    .sub{font-size:13px;}
+
+    .data-table{border:none;background:none;box-shadow:none;}
+    .data-table thead{display:none;}
+    .data-table tbody, .data-table tr, .data-table td{display:block;}
+
+    .data-table tbody tr{
+      background:#fff;
+      border:none;
+      border-radius:16px;
+      box-shadow:0 6px 18px rgba(41,26,12,0.08);
+      margin-bottom:12px;
+      padding:10px 14px;
+    }
+
+    .data-table tbody td{
+      border-bottom:none;
+      padding:6px 0;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      font-size:14px;
+    }
+    .data-table tbody td::before{
+      content:attr(data-label);
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+      color:var(--ink-soft);
+      font-weight:bold;
+    }
+    .data-table tbody td[data-label="Apporte"]{display:block;}
+    .data-table tbody td[data-label="Apporte"]::before{display:block;margin-bottom:4px;}
+
+    .data-table .empty-row td{padding:22px 14px;display:block;}
+    .data-table .empty-row td::before{content:none;}
+
+    .recap-table thead th{padding:10px 8px;font-size:10px;}
+    .recap-table tbody td{padding:10px 8px;font-size:13px;vertical-align:top;}
+    .recap-table td.recap-cat-cell{width:92px;}
+    .recap-cat{font-size:11px;padding:4px 8px;white-space:normal;}
+    .recap-items{line-height:1.5;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="title-row">
+    <span class="flame">🗄️</span>
+    <h1>Archives</h1>
+    <span class="flame">🗄️</span>
+  </div>
+  <div class="sub">Les éditions passées de la Cousinade, telles qu'elles se sont déroulées</div>
+
+  <div class="nav-tabs">
+    <a href="index.html" class="nav-tab">🏠 Accueil</a>
+    <a href="archive.html" class="nav-tab active">🗄️ Archives</a>
+    <a href="photos.html" class="nav-tab">📸 Photos</a>
+  </div>
+
+  <div class="year-picker">
+    <label for="yearSelect">Édition :</label>
+    <select id="yearSelect"></select>
+    <span class="archive-badge">🔒 Lecture seule</span>
+  </div>
+
+  <div class="summary" id="summary"></div>
+
+  <div class="recap-title">Récapitulatif par catégorie</div>
+  <table class="recap-table">
+    <thead>
+      <tr>
+        <th style="width:22%">Catégorie</th>
+        <th>Apporté par</th>
+      </tr>
+    </thead>
+    <tbody id="recapList"></tbody>
+  </table>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width:20%">Nom</th>
+        <th style="width:10%">Adultes</th>
+        <th style="width:10%">Enfants</th>
+        <th>Apporte</th>
+      </tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+  <footer>
+    <div>Archives des éditions passées de la Cousinade.</div>
+    <a class="credit" href="https://www.descodes.com" target="_blank" rel="noopener noreferrer">Créé par <span class="credit-logo"><span class="credit-icon">&lt;/&gt;</span><span class="credit-des">DES</span><span class="credit-codes">CODES</span></span></a>
+  </footer>
+</div>
+
+<script>
+const CATEGORIES = {
+  apero:    { label: "Apéro",    color: "#E3A72E", emoji: "🍹" },
+  barbecue: { label: "Barbecue", color: "#C1443A", emoji: "🍖" },
+  entree:   { label: "Entrée",   color: "#6E7E32", emoji: "🥗" },
+  plat:     { label: "Plat",     color: "#B8562D", emoji: "🍲" },
+  fromage:  { label: "Fromage",  color: "#C99A3A", emoji: "🧀" },
+  dessert:  { label: "Dessert",  color: "#8A5A9E", emoji: "🍰" },
+};
+
+const SUPABASE_URL = "https://ejgmecoqzejdtuwfzwia.supabase.co";
+const SUPABASE_KEY = "sb_publishable_C6pCeS5t1h27nIJK4MVuLA_HEuw7pI4";
+
+let entries = [];
+
+async function supabaseFetch(path){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    headers: {
+      "apikey": SUPABASE_KEY,
+      "Authorization": `Bearer ${SUPABASE_KEY}`,
+      "Content-Type": "application/json"
+    }
+  });
+  if(!res.ok) throw new Error(`Supabase error ${res.status}`);
+  return res.json();
+}
+
+function escapeHtml(str){
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+async function loadYears(){
+  const select = document.getElementById("yearSelect");
+  try{
+    const rows = await supabaseFetch("entries?select=year");
+    const years = [...new Set(rows.map(r => r.year))].sort((a, b) => b - a);
+
+    if(years.length === 0){
+      select.innerHTML = `<option>Aucune édition archivée</option>`;
+      document.getElementById("summary").innerHTML = "";
+      document.getElementById("recapList").innerHTML = "";
+      document.getElementById("rows").innerHTML = `<tr class="empty-row"><td colspan="4">Pas encore d'édition archivée.</td></tr>`;
+      return;
+    }
+
+    select.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join("");
+    select.value = years[0];
+    await loadYear(years[0]);
+  }catch(e){
+    select.innerHTML = `<option>Erreur de chargement</option>`;
+  }
+}
+
+async function loadYear(year){
+  document.getElementById("pageTabTitle").textContent = `Cousinade ${year} — Archives`;
+  try{
+    entries = await supabaseFetch(`entries?select=*,dishes(*)&year=eq.${year}&order=created_at.asc`);
+    entries.forEach(e => {
+      e.dishes = (e.dishes || []).sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    });
+  }catch(e){
+    entries = [];
+  }
+  render();
+}
+
+function renderSummary(){
+  const summary = document.getElementById("summary");
+  const adults = entries.reduce((sum, e) => sum + (e.adults || 0), 0);
+  const children = entries.reduce((sum, e) => sum + (e.children || 0), 0);
+
+  summary.innerHTML = `
+    <div class="pill">${entries.length} <b>foyer${entries.length > 1 ? "s" : ""}</b></div>
+    <div class="pill"><b>${adults}</b> adulte${adults > 1 ? "s" : ""}</div>
+    <div class="pill"><b>${children}</b> enfant${children > 1 ? "s" : ""}</div>
+    <div class="pill"><b>${adults + children}</b> personne${(adults + children) > 1 ? "s" : ""} au total</div>
+  `;
+}
+
+function renderRecap(){
+  const recap = document.getElementById("recapList");
+
+  recap.innerHTML = Object.entries(CATEGORIES).map(([key, cat]) => {
+    const items = [];
+    entries.forEach(e => {
+      (e.dishes || []).forEach(d => {
+        if(d.category === key) items.push(`${escapeHtml(d.dish)} <b>(${escapeHtml(e.name)})</b>`);
+      });
+    });
+
+    return `
+      <tr>
+        <td class="recap-cat-cell"><span class="recap-cat" style="background:${cat.color}">${cat.emoji} ${cat.label}</span></td>
+        <td class="recap-items">${items.length ? items.join(", ") : '<span class="none">Rien de prévu</span>'}</td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function render(){
+  const tbody = document.getElementById("rows");
+  renderSummary();
+  renderRecap();
+
+  if(entries.length === 0){
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="4">Personne n'était inscrit cette année-là.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = entries.map(e => {
+    const dishTags = (e.dishes || []).map(d => {
+      const cat = CATEGORIES[d.category] || { label: d.category, color: "#999" };
+      return `<span class="dish-tag" style="background:${cat.color}">${escapeHtml(d.dish)}</span>`;
+    }).join("");
+
+    return `
+      <tr>
+        <td data-label="Nom">${escapeHtml(e.name)}</td>
+        <td data-label="Adultes">${e.adults ?? 0}</td>
+        <td data-label="Enfants">${e.children ?? 0}</td>
+        <td data-label="Apporte"><div class="dish-list">${dishTags}</div></td>
+      </tr>
+    `;
+  }).join("");
+}
+
+document.getElementById("yearSelect").addEventListener("change", (e) => loadYear(e.target.value));
+
+loadYears();
+</script>
+
+</body>
+</html>
